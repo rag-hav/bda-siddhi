@@ -1,0 +1,17 @@
+@App:name('AlertsApp')
+
+define stream AlertStream (timestamp long, value double, alertMessage string); 
+
+define stream T_Stair_101 (timestamp long, value double); 
+
+@sink(type='log')
+@info(name='alerts')
+from AlertStream
+select *
+insert into AlertStreamTemp;
+
+@sink(type='log')
+@info(name='query_T_Stair_101')
+from T_Stair_101[value > 100]
+select timestamp, value, 'Alert: T_Stair_101 value is greater than static threshold' as alertMessage
+insert into AlertStream;

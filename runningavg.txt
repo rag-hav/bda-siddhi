@@ -1,0 +1,1421 @@
+@App:name('AlertsApp')
+
+define stream AlertStream (timestamp long, value double, alertMessage string); 
+
+define stream T_Stair_101 (timestamp long, attribute double); 
+define stream T_Room_102 (timestamp long, attribute double); 
+define stream T_Room_103 (timestamp long, attribute double); 
+define stream T_Room_104 (timestamp long, attribute double); 
+define stream T_Room_105 (timestamp long, attribute double); 
+define stream T_Room_106 (timestamp long, attribute double); 
+define stream T_Stair_201 (timestamp long, attribute double); 
+define stream T_Room_202 (timestamp long, attribute double); 
+define stream T_Room_203 (timestamp long, attribute double); 
+define stream T_Room_204 (timestamp long, attribute double); 
+define stream T_Room_205 (timestamp long, attribute double); 
+define stream T_Room_206 (timestamp long, attribute double); 
+define stream RH_Stair_101 (timestamp long, attribute double); 
+define stream RH_Room_102 (timestamp long, attribute double); 
+define stream RH_Room_103 (timestamp long, attribute double); 
+define stream RH_Room_104 (timestamp long, attribute double); 
+define stream RH_Room_105 (timestamp long, attribute double); 
+define stream RH_Room_106 (timestamp long, attribute double); 
+define stream RH_Stair_201 (timestamp long, attribute double); 
+define stream RH_Room_202 (timestamp long, attribute double); 
+define stream RH_Room_203 (timestamp long, attribute double); 
+define stream RH_Room_204 (timestamp long, attribute double); 
+define stream RH_Room_205 (timestamp long, attribute double); 
+define stream RH_Room_206 (timestamp long, attribute double); 
+define stream T_Sup_RTU (timestamp long, attribute double); 
+define stream RH_Sup_RTU (timestamp long, attribute double); 
+define stream T_Ret_RTU (timestamp long, attribute double); 
+define stream RH_Ret_RTU (timestamp long, attribute double); 
+define stream T_VAV_102 (timestamp long, attribute double); 
+define stream T_VAV_103 (timestamp long, attribute double); 
+define stream T_VAV_104 (timestamp long, attribute double); 
+define stream T_VAV_105 (timestamp long, attribute double); 
+define stream T_VAV_106 (timestamp long, attribute double); 
+define stream T_VAV_202 (timestamp long, attribute double); 
+define stream T_VAV_203 (timestamp long, attribute double); 
+define stream T_VAV_204 (timestamp long, attribute double); 
+define stream T_VAV_205 (timestamp long, attribute double); 
+define stream T_VAV_206 (timestamp long, attribute double); 
+define stream RH_VAV_102 (timestamp long, attribute double); 
+define stream RH_VAV_103 (timestamp long, attribute double); 
+define stream RH_VAV_104 (timestamp long, attribute double); 
+define stream RH_VAV_105 (timestamp long, attribute double); 
+define stream RH_VAV_106 (timestamp long, attribute double); 
+define stream RH_VAV_202 (timestamp long, attribute double); 
+define stream RH_VAV_203 (timestamp long, attribute double); 
+define stream RH_VAV_204 (timestamp long, attribute double); 
+define stream RH_VAV_205 (timestamp long, attribute double); 
+define stream RH_VAV_206 (timestamp long, attribute double); 
+define stream WH_RTU_Total (timestamp long, attribute double); 
+define stream WH_RTU_Comp1 (timestamp long, attribute double); 
+define stream WH_RTU_Comp2 (timestamp long, attribute double); 
+define stream WH_RTU_Cond1 (timestamp long, attribute double); 
+define stream WH_RTU_Cond2 (timestamp long, attribute double); 
+define stream WH_RTU_Sup_Fan (timestamp long, attribute double); 
+define stream WH_RTU_VAV102 (timestamp long, attribute double); 
+define stream WH_RTU_VAV103 (timestamp long, attribute double); 
+define stream WH_RTU_VAV104 (timestamp long, attribute double); 
+define stream WH_RTU_VAV105 (timestamp long, attribute double); 
+define stream WH_RTU_VAV106 (timestamp long, attribute double); 
+define stream WH_RTU_VAV202 (timestamp long, attribute double); 
+define stream WH_RTU_VAV203 (timestamp long, attribute double); 
+define stream WH_RTU_VAV204 (timestamp long, attribute double); 
+define stream WH_RTU_VAV205 (timestamp long, attribute double); 
+define stream WH_RTU_VAV206 (timestamp long, attribute double); 
+define stream AF_RTU (timestamp long, attribute double); 
+define stream AF_VAV_102 (timestamp long, attribute double); 
+define stream AF_VAV_103 (timestamp long, attribute double); 
+define stream AF_VAV_104 (timestamp long, attribute double); 
+define stream AF_VAV_105 (timestamp long, attribute double); 
+define stream AF_VAV_106 (timestamp long, attribute double); 
+define stream AF_VAV_202 (timestamp long, attribute double); 
+define stream AF_VAV_203 (timestamp long, attribute double); 
+define stream AF_VAV_204 (timestamp long, attribute double); 
+define stream AF_VAV_205 (timestamp long, attribute double); 
+define stream AF_VAV_206 (timestamp long, attribute double); 
+define stream T_out (timestamp long, attribute double); 
+define stream RH_out (timestamp long, attribute double); 
+define stream BP (timestamp long, attribute double); 
+define stream Dir_Solar (timestamp long, attribute double); 
+define stream Dif_Solar (timestamp long, attribute double); 
+define stream Glo_Solar (timestamp long, attribute double); 
+define stream WS (timestamp long, attribute double); 
+define stream WD (timestamp long, attribute double); 
+@sink(type='log')
+@info(name='alerts')
+from AlertStream
+select *
+insert into AlertStreamTemp;
+
+
+
+from T_Stair_101#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Stair_101TempStream;
+
+@sink(type='log')
+@info(name='query_T_Stair_101')
+
+from T_Stair_101 as i join T_Stair_101TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Stair_101 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_102#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_102TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_102')
+
+from T_Room_102 as i join T_Room_102TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_102 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_103#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_103TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_103')
+
+from T_Room_103 as i join T_Room_103TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_103 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_104#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_104TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_104')
+
+from T_Room_104 as i join T_Room_104TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_104 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_105#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_105TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_105')
+
+from T_Room_105 as i join T_Room_105TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_105 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_106#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_106TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_106')
+
+from T_Room_106 as i join T_Room_106TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_106 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Stair_201#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Stair_201TempStream;
+
+@sink(type='log')
+@info(name='query_T_Stair_201')
+
+from T_Stair_201 as i join T_Stair_201TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Stair_201 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_202#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_202TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_202')
+
+from T_Room_202 as i join T_Room_202TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_202 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_203#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_203TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_203')
+
+from T_Room_203 as i join T_Room_203TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_203 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_204#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_204TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_204')
+
+from T_Room_204 as i join T_Room_204TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_204 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_205#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_205TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_205')
+
+from T_Room_205 as i join T_Room_205TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_205 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Room_206#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Room_206TempStream;
+
+@sink(type='log')
+@info(name='query_T_Room_206')
+
+from T_Room_206 as i join T_Room_206TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Room_206 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Stair_101#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Stair_101TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Stair_101')
+
+from RH_Stair_101 as i join RH_Stair_101TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Stair_101 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_102#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_102TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_102')
+
+from RH_Room_102 as i join RH_Room_102TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_102 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_103#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_103TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_103')
+
+from RH_Room_103 as i join RH_Room_103TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_103 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_104#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_104TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_104')
+
+from RH_Room_104 as i join RH_Room_104TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_104 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_105#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_105TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_105')
+
+from RH_Room_105 as i join RH_Room_105TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_105 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_106#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_106TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_106')
+
+from RH_Room_106 as i join RH_Room_106TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_106 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Stair_201#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Stair_201TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Stair_201')
+
+from RH_Stair_201 as i join RH_Stair_201TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Stair_201 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_202#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_202TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_202')
+
+from RH_Room_202 as i join RH_Room_202TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_202 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_203#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_203TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_203')
+
+from RH_Room_203 as i join RH_Room_203TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_203 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_204#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_204TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_204')
+
+from RH_Room_204 as i join RH_Room_204TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_204 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_205#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_205TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_205')
+
+from RH_Room_205 as i join RH_Room_205TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_205 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Room_206#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Room_206TempStream;
+
+@sink(type='log')
+@info(name='query_RH_Room_206')
+
+from RH_Room_206 as i join RH_Room_206TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Room_206 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Sup_RTU#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Sup_RTUTempStream;
+
+@sink(type='log')
+@info(name='query_T_Sup_RTU')
+
+from T_Sup_RTU as i join T_Sup_RTUTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Sup_RTU value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Sup_RTU#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Sup_RTUTempStream;
+
+@sink(type='log')
+@info(name='query_RH_Sup_RTU')
+
+from RH_Sup_RTU as i join RH_Sup_RTUTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Sup_RTU value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_Ret_RTU#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_Ret_RTUTempStream;
+
+@sink(type='log')
+@info(name='query_T_Ret_RTU')
+
+from T_Ret_RTU as i join T_Ret_RTUTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_Ret_RTU value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_Ret_RTU#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_Ret_RTUTempStream;
+
+@sink(type='log')
+@info(name='query_RH_Ret_RTU')
+
+from RH_Ret_RTU as i join RH_Ret_RTUTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_Ret_RTU value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_102#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_102TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_102')
+
+from T_VAV_102 as i join T_VAV_102TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_102 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_103#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_103TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_103')
+
+from T_VAV_103 as i join T_VAV_103TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_103 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_104#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_104TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_104')
+
+from T_VAV_104 as i join T_VAV_104TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_104 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_105#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_105TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_105')
+
+from T_VAV_105 as i join T_VAV_105TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_105 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_106#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_106TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_106')
+
+from T_VAV_106 as i join T_VAV_106TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_106 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_202#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_202TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_202')
+
+from T_VAV_202 as i join T_VAV_202TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_202 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_203#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_203TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_203')
+
+from T_VAV_203 as i join T_VAV_203TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_203 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_204#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_204TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_204')
+
+from T_VAV_204 as i join T_VAV_204TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_204 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_205#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_205TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_205')
+
+from T_VAV_205 as i join T_VAV_205TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_205 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_VAV_206#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_VAV_206TempStream;
+
+@sink(type='log')
+@info(name='query_T_VAV_206')
+
+from T_VAV_206 as i join T_VAV_206TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_VAV_206 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_102#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_102TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_102')
+
+from RH_VAV_102 as i join RH_VAV_102TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_102 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_103#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_103TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_103')
+
+from RH_VAV_103 as i join RH_VAV_103TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_103 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_104#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_104TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_104')
+
+from RH_VAV_104 as i join RH_VAV_104TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_104 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_105#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_105TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_105')
+
+from RH_VAV_105 as i join RH_VAV_105TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_105 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_106#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_106TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_106')
+
+from RH_VAV_106 as i join RH_VAV_106TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_106 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_202#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_202TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_202')
+
+from RH_VAV_202 as i join RH_VAV_202TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_202 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_203#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_203TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_203')
+
+from RH_VAV_203 as i join RH_VAV_203TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_203 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_204#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_204TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_204')
+
+from RH_VAV_204 as i join RH_VAV_204TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_204 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_205#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_205TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_205')
+
+from RH_VAV_205 as i join RH_VAV_205TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_205 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_VAV_206#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_VAV_206TempStream;
+
+@sink(type='log')
+@info(name='query_RH_VAV_206')
+
+from RH_VAV_206 as i join RH_VAV_206TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_VAV_206 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_Total#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_TotalTempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_Total')
+
+from WH_RTU_Total as i join WH_RTU_TotalTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_Total value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_Comp1#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_Comp1TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_Comp1')
+
+from WH_RTU_Comp1 as i join WH_RTU_Comp1TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_Comp1 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_Comp2#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_Comp2TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_Comp2')
+
+from WH_RTU_Comp2 as i join WH_RTU_Comp2TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_Comp2 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_Cond1#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_Cond1TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_Cond1')
+
+from WH_RTU_Cond1 as i join WH_RTU_Cond1TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_Cond1 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_Cond2#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_Cond2TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_Cond2')
+
+from WH_RTU_Cond2 as i join WH_RTU_Cond2TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_Cond2 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_Sup_Fan#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_Sup_FanTempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_Sup_Fan')
+
+from WH_RTU_Sup_Fan as i join WH_RTU_Sup_FanTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_Sup_Fan value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV102#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV102TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV102')
+
+from WH_RTU_VAV102 as i join WH_RTU_VAV102TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV102 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV103#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV103TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV103')
+
+from WH_RTU_VAV103 as i join WH_RTU_VAV103TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV103 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV104#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV104TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV104')
+
+from WH_RTU_VAV104 as i join WH_RTU_VAV104TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV104 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV105#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV105TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV105')
+
+from WH_RTU_VAV105 as i join WH_RTU_VAV105TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV105 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV106#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV106TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV106')
+
+from WH_RTU_VAV106 as i join WH_RTU_VAV106TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV106 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV202#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV202TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV202')
+
+from WH_RTU_VAV202 as i join WH_RTU_VAV202TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV202 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV203#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV203TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV203')
+
+from WH_RTU_VAV203 as i join WH_RTU_VAV203TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV203 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV204#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV204TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV204')
+
+from WH_RTU_VAV204 as i join WH_RTU_VAV204TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV204 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV205#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV205TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV205')
+
+from WH_RTU_VAV205 as i join WH_RTU_VAV205TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV205 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WH_RTU_VAV206#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WH_RTU_VAV206TempStream;
+
+@sink(type='log')
+@info(name='query_WH_RTU_VAV206')
+
+from WH_RTU_VAV206 as i join WH_RTU_VAV206TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WH_RTU_VAV206 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_RTU#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_RTUTempStream;
+
+@sink(type='log')
+@info(name='query_AF_RTU')
+
+from AF_RTU as i join AF_RTUTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_RTU value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_102#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_102TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_102')
+
+from AF_VAV_102 as i join AF_VAV_102TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_102 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_103#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_103TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_103')
+
+from AF_VAV_103 as i join AF_VAV_103TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_103 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_104#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_104TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_104')
+
+from AF_VAV_104 as i join AF_VAV_104TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_104 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_105#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_105TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_105')
+
+from AF_VAV_105 as i join AF_VAV_105TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_105 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_106#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_106TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_106')
+
+from AF_VAV_106 as i join AF_VAV_106TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_106 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_202#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_202TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_202')
+
+from AF_VAV_202 as i join AF_VAV_202TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_202 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_203#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_203TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_203')
+
+from AF_VAV_203 as i join AF_VAV_203TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_203 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_204#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_204TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_204')
+
+from AF_VAV_204 as i join AF_VAV_204TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_204 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_205#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_205TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_205')
+
+from AF_VAV_205 as i join AF_VAV_205TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_205 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from AF_VAV_206#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into AF_VAV_206TempStream;
+
+@sink(type='log')
+@info(name='query_AF_VAV_206')
+
+from AF_VAV_206 as i join AF_VAV_206TempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: AF_VAV_206 value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from T_out#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into T_outTempStream;
+
+@sink(type='log')
+@info(name='query_T_out')
+
+from T_out as i join T_outTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: T_out value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from RH_out#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into RH_outTempStream;
+
+@sink(type='log')
+@info(name='query_RH_out')
+
+from RH_out as i join RH_outTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: RH_out value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from BP#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into BPTempStream;
+
+@sink(type='log')
+@info(name='query_BP')
+
+from BP as i join BPTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: BP value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from Dir_Solar#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into Dir_SolarTempStream;
+
+@sink(type='log')
+@info(name='query_Dir_Solar')
+
+from Dir_Solar as i join Dir_SolarTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: Dir_Solar value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from Dif_Solar#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into Dif_SolarTempStream;
+
+@sink(type='log')
+@info(name='query_Dif_Solar')
+
+from Dif_Solar as i join Dif_SolarTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: Dif_Solar value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from Glo_Solar#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into Glo_SolarTempStream;
+
+@sink(type='log')
+@info(name='query_Glo_Solar')
+
+from Glo_Solar as i join Glo_SolarTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: Glo_Solar value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WS#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WSTempStream;
+
+@sink(type='log')
+@info(name='query_WS')
+
+from WS as i join WSTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WS value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+
+
+
+from WD#window.length(10)
+
+select attribute, avg(attribute) as mean
+insert into WDTempStream;
+
+@sink(type='log')
+@info(name='query_WD')
+
+from WD as i join WDTempStream as t
+on i.attribute > t.mean * 1.1
+
+select timestamp, i.attribute as value, 'Alert: WD value is greater than 10% of last 10 values' as alertMessage
+insert into AlertStream;
+

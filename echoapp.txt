@@ -1,0 +1,13 @@
+@App:name('EchoApp')
+
+-- Define a single input stream
+define stream InputStream (value double);
+
+-- Define a query to echo the input stream
+@sink(type='log')
+@info(name='query1')
+from InputStream
+select value
+insert into OutputStream;
+
+-- Run the Siddhi app
